@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <p:panel>
+                    <span class="FontBold Fs18 hardblue Container100">DataTable</span>
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h:form id="formZone">
+                                <p:growl id="growl" sticky="true" showDetail="true" life="3000"/>
+                                <p:dataTable id="zoneTable" var="car" value="#{zoneBean.zones}" selectionMode="single" selection="#{zoneBean.zone}" rowKey="#{car.id}"
+                                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15" emptyMessage="Aucune zone trouvée" reflow="true" rowIndexVar="index">
+                                    <f:facet name="header">
+                                        Les zones
+                                    </f:facet>
+                                    <p:column headerText="No" >                                      
+                                        <h:outputText value="#{index + 1}"/>
+                                    </p:column>
+
+                                    <p:column headerText="CODE" sortBy="#{car.code}">
+                                        <h:outputText value="#{car.code}" />
+                                    </p:column>
+                                    <p:column headerText="NOM" sortBy="#{car.nom}">
+                                        <h:outputText value="#{car.nom}" />
+                                    </p:column>
+                                    <p:column headerText="CAHIER" sortBy="#{car.cahierCode}">
+                                        <h:outputText value="#{car.cahierCode}" />
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <p:commandButton  value="Ajouter une zone" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":formZone:zoneTable" />
+                                        <p:commandButton  value="Modifier une zone" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierZone"/>
+                                        <p:commandButton  value="Supprimer une zone" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteZone"/>
+                                    </f:facet>
+                                    
+                                </p:dataTable>
+                                </h:form>
+
+                                <p:dialog id="ajoutZone" header="Ajouter une Zone" widgetVar="ajouter_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                                    <h:form id ="saveformZone">
+                                        <h:panelGrid id="display" columns="2" >  
+                                            <h:outputText value="Code : "/> 
+                                            <p:inputText  id="code" value="#{zoneBean.zone.code}"/> 
+                                            <h:outputText value="Nom : " /> 
+                                            <p:inputText  id="nom" value="#{zoneBean.zone.nom}" required="true" requiredMessage="Le nom est obligatoire"/>
+                                            <p:outputLabel for="cahier" value="Cahier:" />
+                                            <p:selectOneMenu id="cahier" value="#{zoneBean.zone.cahierCode}" style="min-width:200px; width:315px;" required="true" requiredMessage="Le cahier est obligatoire">
+                                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                                <f:selectItem itemLabel="Traitement de l'eau" itemValue="OTE" />
+                                                <f:selectItem itemLabel="Groupe Electrogene" itemValue="GPE" />
+                                                <f:selectItem itemLabel="Electricité" itemValue="ELE" />
+                                                <f:selectItem itemLabel="Chaud" itemValue="CHA" />
+                                                <f:selectItem itemLabel="AIR" itemValue="AIR" />
+                                                <f:selectItem itemLabel="Froid" itemValue="FRO" />
+                                                <f:selectItem itemLabel="EAU" itemValue="EAU" />
+                                                <f:selectItem itemLabel="Usine A Glace" itemValue="UAG" />
+                                                <f:selectItem itemLabel="Compresseurs 40b" itemValue="COM" />
+                                                <f:selectItem itemLabel="Compresseur Haffmans" itemValue="COH" />
+                                                <f:selectItem itemLabel="CO2" itemValue="CO2" />
+                                            </p:selectOneMenu>
+                                            <f:facet name="footer"> <br/> 
+                                                <p:commandButton value="Enregistrer" icon="fa fa-save Fs16 white" iconPos="right" action="#{zoneBean.saveOrUpdate()}" update=":formZone:zoneTable"/>
+                                            </f:facet>
+                                            <f:facet name="footer">  
+                                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('ajouter_dialog').hide()" />  
+                                            </f:facet>
+                                        </h:panelGrid> 
+                                    </h:form>
+                                </p:dialog>
+
+                                <p:confirmDialog id="deleteZone" message="voulez-vous vraiment supprimer cette zone ?"
+                                                 header="Initialisation de la suppression" severity="alert"
+                                                 widgetVar="delete_dialog" showEffect="explode" hideEffect="explode"> 
+                                    <div id="center_content_div">
+                                        <p:commandButton  id="confirm" value="OUI" action="#{zoneBean.deleteZOne()}" oncomplete="PF('delete_dialog').hide()" update=":formZone:zoneTable"/>
+                                        
+                                        <p:commandButton styleClass="RedButton" id="decline" value="NON" type="reset" onclick ="PF('delete_dialog').hide();"  />
+                                    </div>
+                                </p:confirmDialog>
+
+                                <p:dialog id="modifierZone" header="Modifier une zone" widgetVar="modifier_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                                    <h:form id ="updateZoneform">
+                                        <h:panelGrid id="updatedisplay" columns="2" rendered="#{not empty zoneBean.zone}">  
+                                            <h:outputText value="Code : "/> 
+                                            <p:inputText  id="codem" value="#{zoneBean.zone.code}"/>
+                                            <h:outputText value="Nom : "/> 
+                                            <p:inputText  id="nomm" value="#{zoneBean.zone.nom}"/>
+                                            <p:outputLabel for="cahierm" value="Basic:" />
+                                            <p:selectOneMenu id="cahierm" value="#{zoneBean.zone.cahierCode}" style="min-width:200px; width:315px;">
+                                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                                <f:selectItem itemLabel="Traitement de l'eau" itemValue="OTE" />
+                                                <f:selectItem itemLabel="Groupe Electrogene" itemValue="GPE" />
+                                                <f:selectItem itemLabel="Electricité" itemValue="ELE" />
+                                                <f:selectItem itemLabel="Chaud" itemValue="CHA" />
+                                                <f:selectItem itemLabel="AIR" itemValue="AIR" />
+                                                <f:selectItem itemLabel="Froid" itemValue="FRO" />
+                                                <f:selectItem itemLabel="EAU" itemValue="EAU" />
+                                                <f:selectItem itemLabel="Usine A Glace" itemValue="UAG" />
+                                                <f:selectItem itemLabel="Compresseurs 40b" itemValue="COM" />
+                                                <f:selectItem itemLabel="Compresseur Haffmans" itemValue="COH" />
+                                                <f:selectItem itemLabel="CO2" itemValue="CO2" />
+                                            </p:selectOneMenu>
+                                            <h:inputHidden value="#{zoneBean.zone.id}"/>
+                                            <h:inputHidden value="#{zoneBean.zone.version}"/>
+                                            <f:facet name="footer"> <br/> 
+                                                <p:commandButton  value="Enregistrer" action="#{secteurBean.saveOrUpdateSecteur()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":formZone:zoneTable" />  
+                                            </f:facet>
+                                            <f:facet name="footer">  
+                                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('modifier_dialog').hide()" />  
+                                            </f:facet>
+                                        </h:panelGrid> 
+                                    </h:form>
+                                </p:dialog>
+
+                                <div class="EmptyBox20"></div>
+
+                            
+                        </div>
+                    </div>
+                </p:panel>
+
+                <div class="EmptyBox20"></div>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

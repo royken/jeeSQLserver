@@ -1,0 +1,64 @@
+package com.royken.teknik.resource.impl;
+
+import com.royken.teknik.entities.Utilisateurs;
+import com.royken.teknik.entities.Zone;
+import com.royken.teknik.entities.projections.BlocZ;
+import com.royken.teknik.entities.projections.Element;
+import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.SousOrgane;
+import com.royken.teknik.entities.projections.ZoneP;
+import com.royken.teknik.resource.ITeknikResource;
+import com.royken.teknik.service.ITeknikService;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ws.rs.Path;
+
+/**
+ *
+ * @author Kenfack Valmy-Roi <roykenvalmy@gmail.com>
+ */
+@Path("/teknik")
+public class TeknikResource implements ITeknikResource{
+    
+    @EJB
+    private ITeknikService service;
+
+    public ITeknikService getService() {
+        return service;
+    }
+
+    public void setService(ITeknikService service) {
+        this.service = service;
+    }
+
+    @Override
+    public List<Utilisateurs> getAllUsers() {
+        return service.findAllUtilisateurs();
+    }
+
+    @Override
+    public List<ZoneP> getAllZone() {
+        return service.findAllZone();
+    }
+
+    @Override
+    public List<BlocZ> getAllBlocs() {
+        return service.findAllBlocProjection();
+    }
+
+    @Override
+    public List<Organe> getAllOrganes() {
+        return service.findAllOrganeProjection();
+    }
+
+    @Override
+    public List<SousOrgane> getAllSousOrgans() {
+        return service.findAllSousOrganeProjection();
+    }
+
+    @Override
+    public List<Element> getAllElement() {
+        return service.findAllElementProjection();
+    }
+    
+}

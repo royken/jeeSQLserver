@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+            <h3 class="hardblue TexAlCenter">Liste des blocs</h3>
+        
+        <div class="Container100">
+            <div class="ContainerIndent">
+
+                <h:form id="blocTable">
+                   
+
+                    <p:dataTable value="#{blocBean.blocs}" var="item" id="tableBloc" selection="#{blocBean.bloc}" selectionMode="single" rowKey="#{item.id}" paginator="true" rows="10" emptyMessage="Aucun Bloc enregistré" reflow="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" rowIndexVar="index">
+                       
+                        <f:facet name="header">
+                            La liste des blocs
+                        </f:facet>
+                        <p:column headerText="No">                                      
+                                        <h:outputText value="#{index + 1}"/>
+                        </p:column>
+                        <p:column headerText="ZONE" sortable="true" filterBy="#{item.zone.nom}" sortBy="#{item.zone.nom}">
+                            <h:outputText value="#{item.zone.nom}"/>
+                        </p:column>
+                        <p:column headerText="CODE" sortable="true" filterBy="#{item.code}" sortBy="#{item.code}">
+                            <h:outputText value="#{item.code}"/>
+                        </p:column>
+                        <p:column headerText="NOM" sortable="true" filterBy="#{item.nom}" sortBy="#{item.nom}">
+                            <h:outputText value="#{item.nom}"/>
+                        </p:column>
+                        <f:facet name="footer">  
+
+                            <p:commandButton  value="Ajouter un Bloc" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":blocTable:tableBloc" />
+                            <p:commandButton  value="Modifier un Bloc" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierBloc"/>
+                            <p:commandButton  value="Supprimer un Bloc" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteBloc"/>
+                        </f:facet> 
+                    </p:dataTable>
+                </h:form>
+                <p:dialog id="ajoutBloc" header="Ajouter un Bloc" widgetVar="ajouter_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="saveBlocform">
+                        <h:panelGrid id="display" columns="2" >  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="encode" value="#{blocBean.bloc.code}"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nomadd" value="#{blocBean.bloc.nom}"/>
+                            <h:outputText value="Zone : "/> 
+                            <p:selectOneMenu value="#{blocBean.id}" class="syntaxe_content" required="true" requiredMessage="La zone est obligatoire" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{blocBean.zones}" var="zone" itemLabel="#{zone.nom}" itemValue="#{zone.id}" />
+                            </p:selectOneMenu> 
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{blocBean.saveOrupdateBloc()}"  oncomplete="PF('ajouter_dialog').hide()" icon="ui-icon-disk" update=":blocTable:tableBloc" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('ajouter_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+
+
+                <p:dialog id="modifierBloc" header="Modifier un Bloc" widgetVar="modifier_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="updateBlocform">
+                        <h:panelGrid id="updatedisplay" columns="2" rendered="#{not empty blocBean.bloc}">  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="codeu" value="#{blocBean.bloc.code}"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nomu" value="#{blocBean.bloc.nom}"/>
+                            <h:outputText value="Zones : "/> 
+                            <p:selectOneMenu value="#{blocBean.id}" class="syntaxe_content" required="true" requiredMessage="La zone est obligatorie" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{blocBean.zones}" var="zone" itemLabel="#{zone.nom}" itemValue="#{zone.id}" />
+                            </p:selectOneMenu>  
+                            <h:inputHidden value="#{blocBean.bloc.id}"/>
+                            <h:inputHidden value="#{blocBean.bloc.version}"/>
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{blocBean.saveOrupdateBloc()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":blocTable:tableBloc" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('modifier_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+                <p:confirmDialog id="deleteBloc" message="voulez-vous vraiment supprimer ce Bloc ?"
+                                 header="Initialisation de la suppression" severity="alert"
+                                 widgetVar="delete_dialog" showEffect="explode" hideEffect="explode"> 
+                    <div id="center_content_div">
+                        <p:commandButton  id="confirm" value="OUI" action="#{blocBean.deleteBloc()}" oncomplete="PF('delete_dialog').hide()" update=":blocTable:tableBloc"/>
+                        <p:commandButton styleClass="RedButton" id="decline" value="NON" type="reset" onclick ="PF('delete_dialog').hide();"  />
+                    </div>
+                </p:confirmDialog>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

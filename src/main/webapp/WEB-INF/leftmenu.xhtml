@@ -1,0 +1,32 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ps="http://primefaces.org/sentinel"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <div id="layout-menubar" class="Unselectable fontRegular">
+        <div class="layout-menubarinner-box" id="buttonArea">
+            <a href="#" id="layout-menubar-resize" class="BordRad3" title="Menu Resize"><i class="icon-th-list-2"></i></a>
+            <a href="#" id="layout-menubar-resize2" class="BordRad3" title="Open Menu"><i class="icon-menu"></i></a>
+        </div>
+
+        <div class="layout-menubarinner-box" id="searchArea">
+            
+            
+        </div>
+
+        <ps:menu id="sm_leftmenu">
+            <p:menuitem id="sm_dashboardMy" value="Tableau de bord" icon="icon-home-outline" outcome="dashboard" containerStyleClass="layout-menubar-active"/>
+            <p:menuitem id="sm_zones" value="Zones" icon=" icon-table" outcome="zones" />
+            <p:menuitem id="sm_blocs" value="Blocs" icon=" icon-table" outcome="blocs" />
+            <p:menuitem id="sm_organes" value="Organes" icon=" icon-table" outcome="organes" />
+            <p:menuitem id="sm_sous_organes" value="Sous Organes" icon=" icon-table" outcome="sousOrganes" />
+            <p:menuitem id="sm_elements" value="Elements" icon=" icon-table" outcome="elements" />
+            <p:menuitem id="sm_utilisateurs" value="Utilisateurs" icon=" icon-table" outcome="utilisateurs" />
+        </ps:menu>
+        
+    </div>
+
+</ui:composition>

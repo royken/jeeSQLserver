@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+         <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <h3 class="hardblue TexAlCenter">Liste des Utilisateurs</h3>
+        <div class="Container100">
+            <div class="ContainerIndent">
+                <p:panel>
+                   
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <h:form id="formUtilisateur">
+                                <p:growl id="growl" sticky="true" showDetail="true" life="3000" autoUpdate="true"/>
+                                <p:dataTable id="utilisateurTable" var="car" value="#{utilisateurBean.utilisateurses}" selectionMode="single" selection="#{utilisateurBean.utilisateurs}" rowKey="#{car.id}"
+                                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15" emptyMessage="Aucune zone trouvée" reflow="true" rowIndexVar="index">
+                                    <f:facet name="header">
+                                        Les Utilisateurs
+                                    </f:facet>
+                                    <p:column headerText="No" >                                      
+                                        <h:outputText value="#{index + 1}"/>
+                                    </p:column>
+
+                                    <p:column headerText="NOM" sortBy="#{car.nom}">
+                                        <h:outputText value="#{car.nom}" />
+                                    </p:column>
+                                    <p:column headerText="LOGIN" sortBy="#{car.login}">
+                                        <h:outputText value="#{car.login}" />
+                                    </p:column>
+                                    <p:column headerText="PASSWORD" sortBy="#{car.password}">
+                                        <h:outputText value="#{car.password}" />
+                                    </p:column>
+                                    <p:column headerText="ROLE" sortBy="#{car.role}">
+                                        <h:outputText value="#{car.role}" />
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <p:commandButton  value="Ajouter un utilisateur" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":formUtilisateur:utilisateurTable" />
+                                        <p:commandButton  value="Modifier un utilisateur" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierUtilisateur"/>
+                                        <p:commandButton  value="Supprimer un utilisateur" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteUtilisateur"/>
+                                    </f:facet>
+                                    
+                                </p:dataTable>
+                                </h:form>
+                            
+
+                                <p:dialog id="ajoutUtilisateur" header="Ajouter un Utilisateur" widgetVar="ajouter_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                                    <h:form id ="saveformUtilisateur">
+                                        <h:panelGrid id="display" columns="2" >  
+                                            <h:outputText value="Nom : "/> 
+                                            <p:inputText  id="nom" value="#{utilisateurBean.utilisateurs.nom}" required="true" requiredMessage="Le nom est obligatoire"/> 
+                                            <h:outputText value="Login : " /> 
+                                            <p:inputText  id="login" value="#{utilisateurBean.utilisateurs.login}" required="true" requiredMessage="Le login est obligatoire"/>
+                                            <h:outputText value="Mot de passe : " /> 
+                                            <p:password  id="mdp" value="#{utilisateurBean.utilisateurs.password}" match="mdp2" required="true" requiredMessage="Le mdp est obligatoire" />
+                                            <h:outputText value="Confirmez Mot de passe : " /> 
+                                            <p:password  id="mdp2" value="#{utilisateurBean.utilisateurs.password}" required="true" requiredMessage="Le mdp est obligatoire" />
+                                            <p:outputLabel for="role" value="Role :" />
+                                            <p:selectOneMenu id="role" value="#{utilisateurBean.utilisateurs.role}" style="min-width:200px; width:315px;" required="true" requiredMessage="Le role est obligatoire">
+                                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                                <f:selectItem itemLabel="Admin" itemValue="admin" />
+                                                <f:selectItem itemLabel="Agent" itemValue="agent" />
+                                            </p:selectOneMenu>
+                                            <f:facet name="footer"> <br/> 
+                                                <p:commandButton value="Enregistrer" icon="fa fa-save Fs16 white" oncomplete="PF('ajouter_dialog').hide()" iconPos="right" action="#{utilisateurBean.saveOrUpdateUtilisateur()}" update=":formUtilisateur:utilisateurTable"/>
+                                            </f:facet>
+                                            <f:facet name="footer">  
+                                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('ajouter_dialog').hide()" />  
+                                            </f:facet>
+                                        </h:panelGrid> 
+                                    </h:form>
+                                </p:dialog>
+
+                                <p:confirmDialog id="deleteUtilisateur" message="voulez-vous vraiment supprimer cet utilisateur ?"
+                                                 header="Initialisation de la suppression" severity="alert"
+                                                 widgetVar="delete_dialog" showEffect="explode" hideEffect="explode"> 
+                                    <div id="center_content_div">
+                                        <p:commandButton  id="confirm" value="OUI" action="#{utilisateurBean.deleteUtilisateur()}" oncomplete="PF('delete_dialog').hide()" update=":formUtilisateur:utilisateurTable"/>
+                                        
+                                        <p:commandButton styleClass="RedButton" id="decline" value="NON" type="reset" onclick ="PF('delete_dialog').hide();"  />
+                                    </div>
+                                </p:confirmDialog>
+
+                                <p:dialog id="modifierUtilisateur" header="Modifier un utilisateur" widgetVar="modifier_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                                    <h:form id ="updateUtilisateurform">
+                                        <h:panelGrid id="updatedisplay" columns="2" rendered="#{not empty utilisateurBean.utilisateurs}">  
+                                            <h:outputText value="Nom : "/> 
+                                            <p:inputText  id="nomMod" value="#{utilisateurBean.utilisateurs.nom}" required="true" requiredMessage="Le nom est obligatoire"/> 
+                                            <h:outputText value="Login : " /> 
+                                            <p:inputText  id="loginMod" value="#{utilisateurBean.utilisateurs.login}" required="true" requiredMessage="Le login est obligatoire"/>
+                                            <h:outputText value="Mot de passe : " /> 
+                                            <p:password  id="mdpMod" value="#{utilisateurBean.utilisateurs.password}" match="mdpMod2" required="true" requiredMessage="Le mdp est obligatoire" />
+                                            <h:outputText value="Confirmez Mot de passe : " /> 
+                                            <p:password  id="mdpMod2" value="#{utilisateurBean.utilisateurs.password}" required="true" requiredMessage="Le mdp est obligatoire" />
+                                            <p:outputLabel for="roleMod" value="Role :" />
+                                            <p:selectOneMenu id="roleMod" value="#{utilisateurBean.utilisateurs.role}" style="min-width:200px; width:315px;" required="true" requiredMessage="Le role est obligatoire">
+                                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                                <f:selectItem itemLabel="Admin" itemValue="admin" />
+                                                <f:selectItem itemLabel="Agent" itemValue="agent" />
+                                            </p:selectOneMenu>
+                                            <h:inputHidden value="#{utilisateurBean.utilisateurs.id}"/>
+                                            <h:inputHidden value="#{utilisateurBean.utilisateurs.version}"/>
+                                            <f:facet name="footer"> <br/> 
+                                                <p:commandButton  value="Enregistrer" action="#{utilisateurBean.saveOrUpdateUtilisateur()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":formUtilisateur:utilisateurTable" />  
+                                            </f:facet>
+                                            <f:facet name="footer">  
+                                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('modifier_dialog').hide()" />  
+                                            </f:facet>
+                                        </h:panelGrid> 
+                                    </h:form>
+                                </p:dialog>
+
+                                <div class="EmptyBox20"></div>
+
+                            
+                        </div>
+                    </div>
+                </p:panel>
+
+                <div class="EmptyBox20"></div>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

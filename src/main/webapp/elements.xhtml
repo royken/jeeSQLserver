@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <h3 class="hardblue TexAlCenter">Liste des Eléments</h3>
+
+        <div class="Container100">
+            <div class="ContainerIndent">
+
+                <h:form id="elementTable">
+
+                    <p:growl id="growl" sticky="true" showDetail="true" life="3000"/>
+                    <p:dataTable value="#{elementBean.elementses}" var="item" id="tableElement" selection="#{elementBean.elements}" selectionMode="single" rowKey="#{item.id}" paginator="true" rows="10" emptyMessage="Aucun Elément enregistré" reflow="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" rowIndexVar="index">
+
+                        <f:facet name="header">
+                            La liste des éléments
+                        </f:facet>
+                        <p:column headerText="No">                                      
+                            <h:outputText value="#{index + 1}"/>
+                        </p:column>
+                        <p:column headerText="S-O" sortable="true" filterBy="#{item.sousOrganes.nom}" sortBy="#{item.sousOrganes.nom}">
+                            <h:outputText value="#{item.sousOrganes.nom}"/>
+                        </p:column>
+                        <p:column headerText="CODE" sortable="true" filterBy="#{item.code}" sortBy="#{item.code}">
+                            <h:outputText value="#{item.code}"/>
+                        </p:column>
+                        <p:column headerText="NOM" sortable="true" filterBy="#{item.nom}" sortBy="#{item.nom}">
+                            <h:outputText value="#{item.nom}"/>
+                        </p:column>
+                        <f:facet name="footer">  
+                            <p:commandButton process="tableElement" update=":elementTable:elementDetail" value="Détails" oncomplete="PF('detailDialog').show()" />
+                            <p:commandButton  value="Ajouter un Sous Organe" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":elementTable:tableElement" />
+                            <p:commandButton  value="Modifier un Sous Organe" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierElement"/>
+                            <p:commandButton  value="Supprimer un Sous Organe" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteElement"/>
+                        </f:facet> 
+                    </p:dataTable>
+                    <p:dialog header="Détails de l'Element" widgetVar="detailDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <p:outputPanel id="elementDetail" style="text-align:center;">
+                            <p:panelGrid  columns="2" rendered="#{not empty elementBean.elements}">
+                                <h:outputText value="Sous organe : " />
+                                <h:outputText value="#{elementBean.elements.sousOrganes.nom}" />
+
+                                <h:outputText value="CODE : " />
+                                <h:outputText value="#{elementBean.elements.code}" />
+                                <h:outputText value="NOM : " />
+                                <h:outputText value="#{elementBean.elements.nom}" />
+                                <h:outputText value="GUIDE : " />
+                                <h:outputText value="#{elementBean.elements.guideSaisie}" />
+                                <h:outputText value="TYPE : " />
+                                <h:outputText value="#{elementBean.elements.valeurType}" />
+                                <h:outputText value="UNITE : " />
+                                <h:outputText value="#{elementBean.elements.unite}" />
+                                <h:outputText value="Valeur Normale : " />
+                                <h:outputText value="#{elementBean.elements.valeurNormale}" />
+                                <h:outputText value="BORNE ?: " />
+                                <h:outputText value="#{elementBean.elements.hasBorns}" />
+                                <h:outputText value="Borne Min : " />
+                                <h:outputText value="#{elementBean.elements.valMin}" />
+                                <h:outputText value="Borne Max : " />
+                                <h:outputText value="#{elementBean.elements.criteriaAlpha ? 'N-1 +' + elementBean.elements.valMax:elementBean.elements.valMax}" />
+                                <h:outputText value="PERIODE : " />
+                                <h:outputText value="#{elementBean.elements.periodeType}" />
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </p:dialog>
+
+                    <div class="EmptyBox20"></div>
+                </h:form>
+                <p:dialog id="ajoutElement" header="Ajouter un Element" widgetVar="ajouter_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="elementform">
+                        <h:panelGrid id="display" columns="2" >  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="encode" value="#{elementBean.elements.code}" required="true" requiredMessage="Le code est obligatoire"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nomadd" value="#{elementBean.elements.nom}" required="true" requiredMessage="Le nom est obligatoire"/>
+                            <h:outputText value="Guide : "/> 
+                            <p:inputText  id="guideadd" value="#{elementBean.elements.guideSaisie}" />
+                            <p:outputLabel for="typeadd" value="Type :" />
+                            <p:selectOneMenu id="typeadd" value="#{elementBean.elements.valeurType}" style="min-width:200px; width:315px;" required="true" requiredMessage="Le type est obligatoire">
+                                <f:selectItem itemLabel="Choisir" itemValue="" />
+                                <f:selectItem itemLabel="Nombre" itemValue="int" />
+                                <f:selectItem itemLabel="Texte" itemValue="string" />
+                            </p:selectOneMenu>
+                            <p:outputLabel  value="Type Bornes :" />
+                            <p:selectOneRadio id="alphaadd" value="#{elementBean.elements.criteriaAlpha}" required="true" requiredMessage="Le type est obligatoire" >
+                                <f:selectItem itemLabel="N+1 + Max" itemValue="#{true}" />
+                                <f:selectItem itemLabel="Nombre Simple" itemValue="#{false}" />
+                            </p:selectOneRadio>
+                            <h:outputText value="Valeur Normale : "/> 
+                            <p:inputText  id="normaleadd" value="#{elementBean.elements.valeurNormale}" />
+                            <h:outputText value="Min : "/> 
+                            <p:inputText  id="minadd" value="#{elementBean.elements.valMin}" />
+                            <h:outputText value="Max : "/> 
+                            <p:inputText  id="maxadd" value="#{elementBean.elements.valMax}" />
+
+                            <p:outputLabel for="periodeadd" value="Période :" />
+                            <p:selectOneMenu id="periodeadd" value="#{elementBean.elements.periodeType}" required="true" requiredMessage="La période est obligatoire">
+                                <f:selectItems value="#{elementBean.periodes}" />
+                            </p:selectOneMenu>
+                            <h:outputText value="Sous Organe : "/> 
+                            <p:selectOneMenu value="#{elementBean.id}" class="syntaxe_content" required="true" requiredMessage="Le sous organe est obligatoire" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{elementBean.sousOrganeses}" var="sorgane" itemLabel="#{sorgane.nom}" itemValue="#{sorgane.id}" />
+                            </p:selectOneMenu> 
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{elementBean.saveOrupdateElement()}"  oncomplete="PF('ajouter_dialog').hide()" icon="ui-icon-disk" update=":elementTable:tableElement" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('ajouter_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+
+
+                <p:dialog id="modifierElement" header="Modifier un Element" widgetVar="modifier_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="updateElementform">
+                        <h:panelGrid id="updatedisplay" columns="2" rendered="#{not empty elementBean.elements}">  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="codemod" value="#{elementBean.elements.code}" required="true" requiredMessage="Le code est obligatoire"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nommod" value="#{elementBean.elements.nom}" required="true" requiredMessage="Le nom est obligatoire"/>
+                            <h:outputText value="Guide : "/> 
+                            <p:inputText  id="guidemod" value="#{elementBean.elements.guideSaisie}" />
+                            <p:outputLabel for="typemod" value="Type :" />
+                            <p:selectOneMenu id="typemod" value="#{elementBean.elements.valeurType}" style="min-width:200px; width:315px;" required="true" requiredMessage="Le type est obligatoire">
+                                <f:selectItem itemLabel="Choisir" itemValue="" />
+                                <f:selectItem itemLabel="Nombre" itemValue="int" />
+                                <f:selectItem itemLabel="Texte" itemValue="string" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="alphamod" value="Type Bornes :" />
+                            <p:selectOneRadio id="alphamod" value="#{elementBean.elements.criteriaAlpha}" required="true" requiredMessage="Le type est obligatoire">
+                                <f:selectItem itemLabel="N+1 + Max" itemValue="#{true}" />
+                                <f:selectItem itemLabel="Nombre Simple" itemValue="#{false}" />
+                            </p:selectOneRadio>
+                            <h:outputText value="Valeur Normale : "/> 
+                            <p:inputText  id="normalemod" value="#{elementBean.elements.valeurNormale}" />
+                            <h:outputText value="Min : "/> 
+                            <p:inputText  id="minmod" value="#{elementBean.elements.valMin}" />
+                            <h:outputText value="Max : "/> 
+                            <p:inputText  id="maxmod" value="#{elementBean.elements.valMax}" />
+
+                            <p:outputLabel for="periodemod" value="Période :" />
+                            <p:selectOneMenu id="periodemod" value="#{elementBean.elements.periodeType}" required="true" requiredMessage="La période est obligatoire">
+                                <f:selectItems value="#{elementBean.periodes}" />
+                            </p:selectOneMenu>
+                            <h:outputText value="Sous Organe : "/> 
+                            <p:selectOneMenu value="#{elementBean.id}" class="syntaxe_content" required="true" requiredMessage="Le sous organe est obligatoire" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{elementBean.sousOrganeses}" var="sorgane" itemLabel="#{sorgane.nom}" itemValue="#{sorgane.id}" />
+                            </p:selectOneMenu>  
+                            <h:inputHidden value="#{elementBean.elements.id}"/>
+                            <h:inputHidden value="#{elementBean.elements.version}"/>
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{elementBean.saveOrupdateElement()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":elementTable:tableElement" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('modifier_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+                <p:confirmDialog id="deleteElement" message="voulez-vous vraiment supprimer cet élement ?"
+                                 header="Initialisation de la suppression" severity="alert"
+                                 widgetVar="delete_dialog" showEffect="explode" hideEffect="explode"> 
+                    <div id="center_content_div">
+                        <p:commandButton  id="confirm" value="OUI" action="#{elementBean.deleteElement()}" oncomplete="PF('delete_dialog').hide()" update=":elementTable:tableElement"/>
+                        <p:commandButton styleClass="RedButton" id="decline" value="NON" type="reset" onclick ="PF('delete_dialog').hide();"  />
+                    </div>
+                </p:confirmDialog>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

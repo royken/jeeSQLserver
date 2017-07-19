@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+            <h3 class="hardblue TexAlCenter">Liste des Sous Organes</h3>
+        
+        <div class="Container100">
+            <div class="ContainerIndent">
+
+                <h:form id="sousorganeTable">
+                   
+                    <p:growl id="growl" sticky="true" showDetail="true" life="3000"/>
+                    <p:dataTable value="#{sousOrganesBean.sousOrganeses}" var="item" id="tableSousOrgane" selection="#{sousOrganesBean.sousOrganes}" selectionMode="single" rowKey="#{item.id}" paginator="true" rows="10" emptyMessage="Aucun Organe enregistré" reflow="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" rowIndexVar="index">
+                       
+                        <f:facet name="header">
+                            La liste des sous organes
+                        </f:facet>
+                        <p:column headerText="No">                                      
+                                        <h:outputText value="#{index + 1}"/>
+                        </p:column>
+                        <p:column headerText="ORGANE" sortable="true" filterBy="#{item.organes.nom}" sortBy="#{item.organes.nom}">
+                            <h:outputText value="#{item.organes.nom}"/>
+                        </p:column>
+                        <p:column headerText="CODE" sortable="true" filterBy="#{item.code}" sortBy="#{item.code}">
+                            <h:outputText value="#{item.code}"/>
+                        </p:column>
+                        <p:column headerText="NOM" sortable="true" filterBy="#{item.nom}" sortBy="#{item.nom}">
+                            <h:outputText value="#{item.nom}"/>
+                        </p:column>
+                        <f:facet name="footer">  
+
+                            <p:commandButton  value="Ajouter un Sous Organe" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":sousorganeTable:tableSousOrgane" />
+                            <p:commandButton  value="Modifier un Sous Organe" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierSousOrgane"/>
+                            <p:commandButton  value="Supprimer un Sous Organe" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteSousOrgane"/>
+                        </f:facet> 
+                    </p:dataTable>
+                </h:form>
+                <p:dialog id="ajoutSousOrgane" header="Ajouter un Sous Organe" widgetVar="ajouter_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="saveSousOrganeform">
+                        <h:panelGrid id="display" columns="2" >  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="encode" value="#{sousOrganesBean.sousOrganes.code}"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nomadd" value="#{sousOrganesBean.sousOrganes.nom}"/>
+                            <h:outputText value="Organe : "/> 
+                            <p:selectOneMenu value="#{sousOrganesBean.id}" class="syntaxe_content" required="true" requiredMessage="L'organe est obligatoire" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{sousOrganesBean.organeses}" var="organe" itemLabel="#{organe.nom}" itemValue="#{organe.id}" />
+                            </p:selectOneMenu> 
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{sousOrganesBean.saveOrupdateSousOrgane()}"  oncomplete="PF('ajouter_dialog').hide()" icon="ui-icon-disk" update=":sousorganeTable:tableSousOrgane" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('ajouter_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+
+
+                <p:dialog id="modifierSousOrgane" header="Modifier un Sous Organe" widgetVar="modifier_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="updateSousOrganeform">
+                        <h:panelGrid id="updatedisplay" columns="2" rendered="#{not empty sousOrganesBean.sousOrganes}">  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="codeu" value="#{sousOrganesBean.sousOrganes.code}"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nomu" value="#{sousOrganesBean.sousOrganes.nom}"/>
+                            <h:outputText value="Organe : "/> 
+                            <p:selectOneMenu value="#{sousOrganesBean.id}" class="syntaxe_content" required="true" requiredMessage="L'organe est obligatorie" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{sousOrganesBean.organeses}" var="organe" itemLabel="#{organe.nom}" itemValue="#{organe.id}" />
+                            </p:selectOneMenu>  
+                            <h:inputHidden value="#{sousOrganesBean.sousOrganes.id}"/>
+                            <h:inputHidden value="#{sousOrganesBean.sousOrganes.version}"/>
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{sousOrganesBean.saveOrupdateSousOrgane()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":sousorganeTable:tableSousOrgane" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('modifier_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+                <p:confirmDialog id="deleteSousOrgane" message="voulez-vous vraiment supprimer ce Sous Organe ?"
+                                 header="Initialisation de la suppression" severity="alert"
+                                 widgetVar="delete_dialog" showEffect="explode" hideEffect="explode"> 
+                    <div id="center_content_div">
+                        <p:commandButton  id="confirm" value="OUI" action="#{sousOrganesBean.deleteSousOrgane()}" oncomplete="PF('delete_dialog').hide()" update=":sousorganeTable:tableSousOrgane"/>
+                        <p:commandButton styleClass="RedButton" id="decline" value="NON" type="reset" onclick ="PF('delete_dialog').hide();"  />
+                    </div>
+                </p:confirmDialog>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

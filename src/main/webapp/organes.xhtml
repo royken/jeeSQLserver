@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+            <h3 class="hardblue TexAlCenter">Liste des Organes</h3>
+        
+        <div class="Container100">
+            <div class="ContainerIndent">
+
+                <h:form id="organeTable">
+                   
+                    <p:growl id="growl" sticky="true" showDetail="true" life="3000"/>
+                    <p:dataTable value="#{organeBean.organeses}" var="item" id="tableOrgane" selection="#{organeBean.organes}" selectionMode="single" rowKey="#{item.id}" paginator="true" rows="10" emptyMessage="Aucun Organe enregistré" reflow="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" rowIndexVar="index">
+                       
+                        <f:facet name="header">
+                            La liste des organes
+                        </f:facet>
+                        <p:column headerText="No">                                      
+                                        <h:outputText value="#{index + 1}"/>
+                        </p:column>
+                        <p:column headerText="BLOC" sortable="true" filterBy="#{item.bloc.nom}" sortBy="#{item.bloc.nom}">
+                            <h:outputText value="#{item.bloc.nom}"/>
+                        </p:column>
+                        <p:column headerText="CODE" sortable="true" filterBy="#{item.code}" sortBy="#{item.code}">
+                            <h:outputText value="#{item.code}"/>
+                        </p:column>
+                        <p:column headerText="NOM" sortable="true" filterBy="#{item.nom}" sortBy="#{item.nom}">
+                            <h:outputText value="#{item.nom}"/>
+                        </p:column>
+                        <f:facet name="footer">  
+
+                            <p:commandButton  value="Ajouter un Organe" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":organeTable:tableOrgane" />
+                            <p:commandButton  value="Modifier un Organe" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierOrgane"/>
+                            <p:commandButton  value="Supprimer un Organe" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteOrgane"/>
+                        </f:facet> 
+                    </p:dataTable>
+                </h:form>
+                <p:dialog id="ajoutOrgane" header="Ajouter un Organe" widgetVar="ajouter_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="saveOrganeform">
+                        <h:panelGrid id="display" columns="2" >  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="encode" value="#{organeBean.organes.code}"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nomadd" value="#{organeBean.organes.nom}"/>
+                            <h:outputText value="Bloc : "/> 
+                            <p:selectOneMenu value="#{organeBean.id}" class="syntaxe_content" required="true" requiredMessage="Le bloc est obligatoire" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{organeBean.blocs}" var="bloc" itemLabel="#{bloc.nom}" itemValue="#{bloc.id}" />
+                            </p:selectOneMenu> 
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{organeBean.saveOrupdateOrgane()}"  oncomplete="PF('ajouter_dialog').hide()" icon="ui-icon-disk" update=":organeTable:tableOrgane" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('ajouter_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+
+
+                <p:dialog id="modifierOrgane" header="Modifier un Organe" widgetVar="modifier_dialog" resizable="true"  showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="updateOrganeform">
+                        <h:panelGrid id="updatedisplay" columns="2" rendered="#{not empty organeBean.organes}">  
+                            <h:outputText value="Code : "/> 
+                            <p:inputText  id="codeu" value="#{organeBean.organes.code}"/>
+                            <h:outputText value="Nom : "/> 
+                            <p:inputText  id="nomu" value="#{organeBean.organes.nom}"/>
+                            <h:outputText value="Bloc : "/> 
+                            <p:selectOneMenu value="#{organeBean.id}" class="syntaxe_content" required="true" requiredMessage="Le bloc est obligatorie" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
+                                <f:selectItems value="#{organeBean.blocs}" var="bloc" itemLabel="#{bloc.nom}" itemValue="#{bloc.id}" />
+                            </p:selectOneMenu>  
+                            <h:inputHidden value="#{organeBean.organes.id}"/>
+                            <h:inputHidden value="#{organeBean.organes.version}"/>
+                            <f:facet name="footer"> <br/> 
+                                <p:commandButton  value="Enregistrer" action="#{organeBean.saveOrupdateOrgane()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":organeTable:tableOrgane" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('modifier_dialog').hide()" />  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+                <p:confirmDialog id="deleteOrgane" message="voulez-vous vraiment supprimer cet Organe ?"
+                                 header="Initialisation de la suppression" severity="alert"
+                                 widgetVar="delete_dialog" showEffect="explode" hideEffect="explode"> 
+                    <div id="center_content_div">
+                        <p:commandButton  id="confirm" value="OUI" action="#{organeBean.deleteOrgane()}" oncomplete="PF('delete_dialog').hide()" update=":organeTable:tableOrgane"/>
+                        <p:commandButton styleClass="RedButton" id="decline" value="NON" type="reset" onclick ="PF('delete_dialog').hide();"  />
+                    </div>
+                </p:confirmDialog>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>
