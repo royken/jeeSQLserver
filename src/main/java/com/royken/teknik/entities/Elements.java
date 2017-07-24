@@ -32,7 +32,7 @@ public class Elements implements Serializable {
     private List<Reponse> reponses;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
     

@@ -77,6 +77,7 @@
                             </p:selectOneMenu>  
                             <h:inputHidden value="#{sousOrganesBean.sousOrganes.id}"/>
                             <h:inputHidden value="#{sousOrganesBean.sousOrganes.version}"/>
+                            <h:inputHidden value="#{sousOrganesBean.sousOrganes.active}"/>
                             <f:facet name="footer"> <br/> 
                                 <p:commandButton  value="Enregistrer" action="#{sousOrganesBean.saveOrupdateSousOrgane()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":sousorganeTable:tableSousOrgane" />  
                             </f:facet>

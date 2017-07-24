@@ -5,11 +5,15 @@ import com.royken.teknik.entities.Zone;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
 import com.royken.teknik.resource.ITeknikResource;
 import com.royken.teknik.service.ITeknikService;
+import com.royken.teknik.service.ServiceException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.Path;
 
@@ -59,6 +63,15 @@ public class TeknikResource implements ITeknikResource{
     @Override
     public List<Element> getAllElement() {
         return service.findAllElementProjection();
+    }
+
+    @Override
+    public void saveReponses(List<ReponseProjection> projections) {
+        try {
+            service.saveReponseFromWeb(projections);
+        } catch (ServiceException ex) {
+            Logger.getLogger(TeknikResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

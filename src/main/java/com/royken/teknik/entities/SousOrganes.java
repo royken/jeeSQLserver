@@ -32,7 +32,7 @@ public class SousOrganes implements Serializable{
     private List<Elements> elementss;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
     
