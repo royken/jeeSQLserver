@@ -4,12 +4,16 @@ import com.royken.teknik.entities.Utilisateurs;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
 import java.util.List;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -47,4 +51,9 @@ public interface ITeknikResource {
     @Produces(value = "application/json")
     @Path(value = "elements")
     List<Element> getAllElement();
+    
+    @POST
+    @Path("reponse")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void saveReponses(List<ReponseProjection> projections);
 }

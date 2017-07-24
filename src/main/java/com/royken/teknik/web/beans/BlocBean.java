@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -20,7 +21,7 @@ import org.primefaces.context.RequestContext;
  * @author Kenfack Valmy-Roi <roykenvalmy@gmail.com>
  */
 @Named(value = "blocBean")
-@SessionScoped
+@RequestScoped
 public class BlocBean implements Serializable {
     
     @EJB

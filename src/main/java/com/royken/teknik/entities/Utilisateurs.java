@@ -29,7 +29,7 @@ public class Utilisateurs implements Serializable{
     @OneToMany(mappedBy = "utilisateurs")
     private List<Reponse> reponses;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
     

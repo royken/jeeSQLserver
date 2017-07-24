@@ -29,7 +29,7 @@ public class Reponse implements Serializable{
     
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
     
@@ -121,6 +121,11 @@ public class Reponse implements Serializable{
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "Reponse{" + "date=" + date + ", valeur=" + valeur + ", valeurCorrecte=" + valeurCorrecte + ", active=" + active + '}';
     }
     
     

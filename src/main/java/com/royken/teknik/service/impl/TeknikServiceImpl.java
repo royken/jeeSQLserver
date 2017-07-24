@@ -18,6 +18,7 @@ import com.royken.teknik.entities.Reponse;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
 import com.royken.teknik.service.ITeknikService;
@@ -304,6 +305,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     return blocDao.update(bloc);
                 }
                 else{
+                    bloc.setActive(1);
                     return blocDao.create(bloc);
                 }
             }
@@ -352,6 +354,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     return organesDao.create(organes);
                 }
                 else{
+                    organes.setActive(1);
                     return organesDao.update(organes);
                 }
             }
@@ -400,6 +403,8 @@ public class TeknikServiceImpl implements ITeknikService{
                     return zoneDao.update(zone);
                 }
                 else{
+                    System.out.println("JE SAVE ==================");
+                    zone.setActive(1);
                     return zoneDao.create(zone);
                 }
             }
@@ -448,6 +453,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     return sousOrganesDao.create(sousOrganes);
                 }
                 else{
+                    sousOrganes.setActive(1);
                     return sousOrganesDao.update(sousOrganes);
                 }
             }
@@ -496,6 +502,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     return elementDao.create(elements);
                 }
                 else{
+                    elements.setActive(1);
                     return elementDao.update(elements);
                 }
             }
@@ -544,6 +551,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     return reponseDao.create(reponse);
                 }
                 else{
+                    reponse.setActive(1);
                     return reponseDao.update(reponse);
                 }
             }
@@ -644,9 +652,11 @@ public class TeknikServiceImpl implements ITeknikService{
         try {
             if(utilisateurs != null){
                 if(utilisateurs.getId() == null){
+                    utilisateurs.setActive(1);
                     return utilisateursDao.create(utilisateurs);
                 }
                 else{
+                    utilisateurs.setActive(1);
                     return utilisateursDao.update(utilisateurs);
                 }
             }
@@ -693,6 +703,30 @@ public class TeknikServiceImpl implements ITeknikService{
             return utilisateursDao.findAll();
         } catch (Exception e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
+        }
+    }
+
+    @Override
+    public void saveReponseFromWeb(List<ReponseProjection> projections) throws ServiceException {
+        for (ReponseProjection projection : projections) {
+            System.out.println(projection);
+        }
+        try {
+            if (projections != null){
+                for (ReponseProjection projection : projections) {
+                    Elements e =  elementDao.findById(Long.valueOf(projection.getIdElement()));
+                    Utilisateurs u = utilisateursDao.findById(Long.valueOf(projection.getIdUser()));
+                    Reponse r = new Reponse();
+                    r.setActive(1);
+                    r.setDate(projection.getDate());
+                    r.setElements(e);
+                    r.setUtilisateurs(u);
+                    r.setValeur(projection.getValeur());
+                    r.setValeurCorrecte(projection.isValeurCorrecte());
+                    reponseDao.create(r);
+                }
+            }
+        } catch (Exception e) {
         }
     }
 }

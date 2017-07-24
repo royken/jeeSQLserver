@@ -156,6 +156,7 @@
                             </p:selectOneMenu>  
                             <h:inputHidden value="#{elementBean.elements.id}"/>
                             <h:inputHidden value="#{elementBean.elements.version}"/>
+                            <h:inputHidden value="#{elementBean.elements.active}"/>
                             <f:facet name="footer"> <br/> 
                                 <p:commandButton  value="Enregistrer" action="#{elementBean.saveOrupdateElement()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":elementTable:tableElement" />  
                             </f:facet>

@@ -10,6 +10,7 @@ import com.royken.teknik.entities.Zone;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
 import java.util.List;
@@ -41,6 +42,8 @@ public interface ITeknikService {
     public List<Organe> findAllOrganeProjection();
     
     public List<SousOrgane> findAllSousOrganeProjection();
+    
+    public void saveReponseFromWeb(List<ReponseProjection> projections) throws ServiceException;
     
     //public List<ZoneP> findAllZoneProjection();
     

@@ -65,7 +65,7 @@
                                                 <f:selectItem itemLabel="CO2" itemValue="CO2" />
                                             </p:selectOneMenu>
                                             <f:facet name="footer"> <br/> 
-                                                <p:commandButton value="Enregistrer" icon="fa fa-save Fs16 white" iconPos="right" action="#{zoneBean.saveOrUpdate()}" update=":formZone:zoneTable"/>
+                                                <p:commandButton value="Enregistrer" icon="fa fa-save Fs16 white" iconPos="right" action="#{zoneBean.saveOrUpdate()}" update=":formZone:zoneTable" oncomplete="PF('ajouter_dialog').hide()" />
                                             </f:facet>
                                             <f:facet name="footer">  
                                                 <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('ajouter_dialog').hide()" />  
@@ -108,8 +108,9 @@
                                             </p:selectOneMenu>
                                             <h:inputHidden value="#{zoneBean.zone.id}"/>
                                             <h:inputHidden value="#{zoneBean.zone.version}"/>
+                                            <h:inputHidden value="#{zoneBean.zone.active}"/>
                                             <f:facet name="footer"> <br/> 
-                                                <p:commandButton  value="Enregistrer" action="#{secteurBean.saveOrUpdateSecteur()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":formZone:zoneTable" />  
+                                                <p:commandButton  value="Enregistrer" action="#{zoneBean.saveOrUpdate()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":formZone:zoneTable" />  
                                             </f:facet>
                                             <f:facet name="footer">  
                                                 <p:commandButton styleClass="RedButton" value="Annuler" onclick="PF('modifier_dialog').hide()" />  

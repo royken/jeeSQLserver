@@ -105,6 +105,7 @@
                                             </p:selectOneMenu>
                                             <h:inputHidden value="#{utilisateurBean.utilisateurs.id}"/>
                                             <h:inputHidden value="#{utilisateurBean.utilisateurs.version}"/>
+                                            <h:inputHidden value="#{utilisateurBean.utilisateurs.active}"/>
                                             <f:facet name="footer"> <br/> 
                                                 <p:commandButton  value="Enregistrer" action="#{utilisateurBean.saveOrUpdateUtilisateur()}"  oncomplete="PF('modifier_dialog').hide()" icon="ui-icon-disk" update=":formUtilisateur:utilisateurTable" />  
                                             </f:facet>
