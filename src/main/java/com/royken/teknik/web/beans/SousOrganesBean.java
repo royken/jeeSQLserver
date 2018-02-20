@@ -24,6 +24,8 @@ import org.primefaces.context.RequestContext;
 @RequestScoped
 public class SousOrganesBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @EJB
     private ITeknikService service;
     

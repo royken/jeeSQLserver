@@ -1,13 +1,11 @@
 body{
-    //background-color: #f7f0c6;   
-    background-color: lavender ;
+  background-color: lavender ;
     font-size: 1.5em;
 }
 .page-header{
     background-image: url("../img/logo.png");
     background-repeat: no-repeat;
     height: 200px;
-    //margin-bottom: 10px;
     background-position: center;
 }
 .test  {
@@ -42,7 +40,6 @@ table.type_cours td:last-child{
 }
 .type_cours_datatable_in_datadgrid{    
     height: 250px;
-    //margin-top: 0px;
     width: 100%;
 }
 #aa,#ab,#ac{
@@ -50,8 +47,6 @@ table.type_cours td:last-child{
 }
 
 .syntaxe_content{
-    //margin-left: 10px;
-    //margin-top: 10px;
     width: 100%;    
 
     margin-top: 5px;
@@ -59,8 +54,6 @@ table.type_cours td:last-child{
 }
 #center_content_div{
     text-align: center;
-    //width: ;
-    //margin: auto;
 }
 .cmd_button{
     width: auto;

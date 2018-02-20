@@ -23,6 +23,8 @@ import org.primefaces.context.RequestContext;
 @Named(value = "organeBean")
 @RequestScoped
 public class OrganeBean implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     
     @EJB
     private ITeknikService service;

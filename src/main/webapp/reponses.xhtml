@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <h3 class="hardblue TexAlCenter">Les Données</h3>
+
+        <div class="Container100">
+            <div class="ContainerIndent">
+
+                <h:form id="reponseTable">
+
+                    <p:growl id="growl" sticky="true" showDetail="true" life="3000"/>
+                    <p:dataTable value="#{reponseBean.reponses}" var="item" id="tableReponse" selection="#{reponseBean.reponse}" selectionMode="single" rowKey="#{item.id}" paginator="true" rows="10" emptyMessage="Aucune réponse" reflow="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" rowIndexVar="index">
+
+                        <f:facet name="header">
+                            Les données
+                        </f:facet>
+                        <p:column headerText="No">                                      
+                            <h:outputText value="#{index + 1}"/>
+                        </p:column>
+                        <p:column headerText="Element" sortable="true" filterBy="#{item.elements.code}" sortBy="#{item.elements.code}">
+                            <h:outputText value="#{item.elements.code}"/>
+                        </p:column>
+                        <p:column headerText="Valeur" sortable="true" filterBy="#{item.valeur}" sortBy="#{item.valeur}">
+                            <h:outputText value="#{item.valeur}"/>
+                        </p:column>
+
+                        <p:column headerText="Correcte ?" sortable="true">
+                            <h:outputText value="#{item.valeurCorrecte? 'OK':'NOK'}" />
+                        </p:column>
+                        <p:column headerText="Date" sortable="true" filterBy="#{item.date}" sortBy="#{item.date}">
+                            <h:outputText value="#{item.date}" >
+                                <f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm" timeZone="#{applicationBean.timeZone}"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Utilisateur" sortable="true" filterBy="#{item.utilisateurs.nom}" sortBy="#{item.utilisateurs.nom}">
+                            <h:outputText value="#{item.utilisateurs.nom}"/>
+                        </p:column>
+                        <f:facet name="footer">  
+                            <p:commandButton value="Importer" onclick="PF('importer_dialog').show()" icon="ui-icon-disk" update=":reponseTable:tableReponse" />
+                        </f:facet> 
+                    </p:dataTable>
+                </h:form>
+
+
+                <p:dialog id="import" header="Importer des Données" widgetVar="importer_dialog"  width="500" showEffect="clip" hideEffect="explode" modal="true"> 
+                    <h:form id ="importform"  enctype="multipart/form-data">
+                        <h:panelGrid id="display" columns="2" >
+                            <h:outputText  value="Selectionner le fichier excel " />  
+                            <p:fileUpload required="true"  value="#{reponseBean.file}" mode="simple"
+                                          auto="true"  
+                                          sizeLimit="100000"   
+                                          allowTypes="/(\.|\/)(xslx|xsl)$/" class="syntaxe_content" update="feuille" process="@this" invalidFileMessage="fichier invalide" requiredMessage="chargez le fichier" > 
+                                <!--                                    <p:ajax listener="" event="change" update="cities" process="@this"/>-->
+                            </p:fileUpload>
+
+                            <f:facet name="footer"> <br/>  
+                                <p:commandButton value="Importer" action="#{reponseBean.importer()}"  oncomplete="PF('importer_dialog').hide()" icon="ui-icon-disk" update=":form:table" ajax="false" />  
+                            </f:facet>
+                            <f:facet name="footer">  
+                                <p:commandButton value="Effacer" type="reset" styleClass="RedButton"/>  
+                            </f:facet>
+                        </h:panelGrid> 
+                    </h:form>
+                </p:dialog>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

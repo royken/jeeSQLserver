@@ -23,6 +23,8 @@ import org.primefaces.context.RequestContext;
 @RequestScoped
 public class ZoneBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @EJB
     private ITeknikService teknikService;
 

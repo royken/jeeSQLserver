@@ -18,18 +18,30 @@ import com.royken.teknik.entities.Reponse;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.PostAnswer;
 import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
 import com.royken.teknik.service.ITeknikService;
 import com.royken.teknik.service.ServiceException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.hibernate.exception.DataException;
 
 /**
  *
@@ -121,7 +133,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Utilisateurs> findAllUtilisateurs() {
         try {
-            return utilisateursDao.findAll();
+            return utilisateursDao.getAllActive();
         } catch (DataAccessException ex) {
             Logger.getLogger(TeknikServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -131,7 +143,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Bloc> findAllBloc() {
         try {
-            return blocDao.findAll();
+            return blocDao.getAllActive();
         } catch (DataAccessException ex) {
             Logger.getLogger(TeknikServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -141,7 +153,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<ZoneP> findAllZone() {
         try {
-            List<Zone> zones =  zoneDao.findAll();
+            List<Zone> zones =  zoneDao.findAllActive();
             List<ZoneP> result = new ArrayList<>();
             for (Zone zone : zones) {
                 ZoneP z = new ZoneP();
@@ -161,7 +173,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Organes> findAllOrganes() {
         try {
-            return organesDao.findAll();
+            return organesDao.getAllActive();
         } catch (DataAccessException ex) {
             Logger.getLogger(TeknikServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -171,7 +183,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<SousOrganes> findAllSousOrganes() {
         try {
-            return sousOrganesDao.findAll();
+            return sousOrganesDao.getAllActive();
         } catch (DataAccessException ex) {
             Logger.getLogger(TeknikServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -181,7 +193,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Elements> findAllElement() {
         try {
-            return elementDao.findAll();
+            return elementDao.getAllActive();
         } catch (DataAccessException ex) {
             Logger.getLogger(TeknikServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -191,7 +203,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<BlocZ> findAllBlocProjection() {
         try {
-            List<Bloc> blocs = blocDao.findAll();
+            List<Bloc> blocs = blocDao.getAllActive();
             List<BlocZ> result = new ArrayList();
             for (Bloc result1 : blocs) {
                 BlocZ temp = new BlocZ();
@@ -211,7 +223,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Element> findAllElementProjection() {
         try {
-            List<Elements> list = elementDao.findAll();
+            List<Elements> list = elementDao.getAllActive();
             List<Element> result = new ArrayList<>();
             for (Elements result1 : list) {
                 Element temp = new Element();
@@ -241,7 +253,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Organe> findAllOrganeProjection() {
         try {
-            List<Organes> list = organesDao.findAll();
+            List<Organes> list = organesDao.getAllActive();
             List<Organe> result = new ArrayList<>();
             for (Organes result1 : list) {
                 Organe organe = new Organe();
@@ -261,7 +273,7 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<SousOrgane> findAllSousOrganeProjection() {
         try {
-            List<SousOrganes> list = sousOrganesDao.findAll();
+            List<SousOrganes> list = sousOrganesDao.getAllActive();
             List<SousOrgane> result = new ArrayList<>();
             for (SousOrganes result1 : list) {
                 SousOrgane temp = new SousOrgane();
@@ -302,6 +314,7 @@ public class TeknikServiceImpl implements ITeknikService{
         try {
             if(bloc != null){
                 if(bloc.getId() != null){
+                    bloc.setActive(1);
                     return blocDao.update(bloc);
                 }
                 else{
@@ -341,7 +354,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     blocDao.update(b);
                 }
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de la sauvegarde");
         }
     }
@@ -351,6 +364,7 @@ public class TeknikServiceImpl implements ITeknikService{
         try {
             if(organes != null){
                 if(organes.getId() == null){
+                    organes.setActive(1);
                     return organesDao.create(organes);
                 }
                 else{
@@ -390,7 +404,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     organesDao.update(o);
                 }
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de la suppression");
         }
     }
@@ -400,6 +414,7 @@ public class TeknikServiceImpl implements ITeknikService{
         try {
             if(zone != null){
                 if(zone.getId() != null){
+                    zone.setActive(1);
                     return zoneDao.update(zone);
                 }
                 else{
@@ -440,7 +455,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     zoneDao.update(z);
                 }
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de la suppression");
         }
     }
@@ -450,6 +465,7 @@ public class TeknikServiceImpl implements ITeknikService{
         try {
             if(sousOrganes != null){
                 if(sousOrganes.getId() == null){
+                    sousOrganes.setActive(1);
                     return sousOrganesDao.create(sousOrganes);
                 }
                 else{
@@ -489,7 +505,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     sousOrganesDao.update(so);
                 }
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -498,7 +514,8 @@ public class TeknikServiceImpl implements ITeknikService{
     public Elements saveOrUpdateElement(Elements elements) throws ServiceException {
         try {
             if(elements != null){
-                if(elements.getId() != null){
+                if(elements.getId() == null){
+                    elements.setActive(1);
                     return elementDao.create(elements);
                 }
                 else{
@@ -538,7 +555,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     elementDao.update(e);
                 }
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -548,6 +565,7 @@ public class TeknikServiceImpl implements ITeknikService{
         try {
             if(reponse != null){
                 if(reponse.getId() == null){
+                    reponse.setActive(1);
                     return reponseDao.create(reponse);
                 }
                 else{
@@ -585,15 +603,15 @@ public class TeknikServiceImpl implements ITeknikService{
                     reponseDao.update(r);
                 }
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
         }
     }
 
     @Override
     public List<Bloc> getAllBloc() throws ServiceException {
         try {
-            return blocDao.findAll();
-        } catch (Exception e) {
+            return blocDao.getAllActive();
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -601,8 +619,8 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Organes> getAllOrganes() throws ServiceException {
         try {
-            return organesDao.findAll();
-        } catch (Exception e) {
+            return organesDao.getAllActive();
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -610,12 +628,12 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Zone> getAllZones() throws ServiceException {
         try {
-            List<Zone> result =  zoneDao.findAll();
+            List<Zone> result =  zoneDao.findAllActive();
             for (Zone result1 : result) {
                 System.out.println(result1);
             }
             return result;
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -623,8 +641,8 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<SousOrganes> getAllSousOrganes() throws ServiceException {
         try {
-            return sousOrganesDao.findAll();
-        } catch (Exception e) {
+            return sousOrganesDao.getAllActive();
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -632,8 +650,8 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Elements> getAllElement() throws ServiceException {
         try {
-            return elementDao.findAll();
-        } catch (Exception e) {
+            return elementDao.getAllActive();
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -642,7 +660,7 @@ public class TeknikServiceImpl implements ITeknikService{
     public List<Reponse> getAllReponse() throws ServiceException {
         try {
             return reponseDao.findAll();
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -692,7 +710,7 @@ public class TeknikServiceImpl implements ITeknikService{
                     utilisateursDao.update(u);
                 }
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
@@ -700,17 +718,19 @@ public class TeknikServiceImpl implements ITeknikService{
     @Override
     public List<Utilisateurs> getAllUtilisateurs() throws ServiceException {
         try {
-            return utilisateursDao.findAll();
-        } catch (Exception e) {
+            return utilisateursDao.getAllActive();
+        } catch (DataAccessException e) {
             throw new ServiceException("Erreur lors de l'accès à la BD");
         }
     }
 
     @Override
-    public void saveReponseFromWeb(List<ReponseProjection> projections) throws ServiceException {
-        for (ReponseProjection projection : projections) {
+    public PostAnswer saveReponseFromWeb(List<ReponseProjection> projections) throws ServiceException {
+      /*  for (ReponseProjection projection : projections) {
             System.out.println(projection);
         }
+        */
+      PostAnswer answer = new PostAnswer();
         try {
             if (projections != null){
                 for (ReponseProjection projection : projections) {
@@ -725,8 +745,125 @@ public class TeknikServiceImpl implements ITeknikService{
                     r.setValeurCorrecte(projection.isValeurCorrecte());
                     reponseDao.create(r);
                 }
+                answer.setSuccess(true);
+                return answer;
             }
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
         }
+        return answer;
+    }
+
+    @Override
+    public List<Reponse> getReponseBetweenDates(Date debut, Date fin) throws ServiceException {
+        try {
+            if(debut != null && fin != null){
+                return reponseDao.getBetweenDates(debut, fin);
+            }
+        } catch (DataException e) {
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public void importReponse(InputStream stream) throws ServiceException {
+        try {
+            Workbook workbook = WorkbookFactory.create(stream);
+            final Sheet sheet = workbook.getSheetAt(0);
+            int index = 1;
+            Row row = sheet.getRow(index++);
+            Long idElement;
+            Long idUser;
+            String valeur;
+            boolean correct;
+            Date date;
+            while (row != null) {   
+               Reponse r = new Reponse();
+                if (row.getCell(1) != null) {
+                    //row.getCell(1).setCellType(Cell.CELL_TYPE_NUMERIC);
+                    idElement = Long.valueOf(row.getCell(1).getStringCellValue().trim());
+                    Elements e = elementDao.findById(idElement);
+                    r.setElements(e);
+                    if(row.getCell(2) != null){
+                        row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
+                        valeur = row.getCell(2).getStringCellValue().trim();
+                        r.setValeur(valeur);
+                        if(row.getCell(3) != null){
+                            //correct = row.getCell(2).getBooleanCellValue();
+                            String value = row.getCell(2).getStringCellValue().trim();
+                            r.setValeurCorrecte(value.equalsIgnoreCase("true"));
+                            if(row.getCell(4) != null){
+                                //date = row.getCell(40).getDateCellValue();
+                                String dates = row.getCell(4).getStringCellValue().trim();
+                                r.setDate(new Date(Long.valueOf(dates)));
+                                if(row.getCell(5) != null){
+                                    //row.getCell(5).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                    idUser = Long.valueOf(row.getCell(5).getStringCellValue().trim());
+                                    Utilisateurs u = utilisateursDao.findById(idUser);
+                                    r.setUtilisateurs(u);
+                                    r.setActive(1);
+                                    reponseDao.create(r);
+                                }
+                            }
+                        }
+                    }                    
+                }
+                row = sheet.getRow(index++);
+            }
+        } catch (DataAccessException | IOException | NumberFormatException | EncryptedDocumentException | InvalidFormatException e) {
+        }
+    }
+
+    @Override
+    public Long countZone() throws ServiceException {
+        try {
+            return zoneDao.count();
+        } catch (DataAccessException e) {
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long countBloc() throws ServiceException {
+        try {
+            return blocDao.count();
+        } catch (DataAccessException e) {
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long countOrgane() throws ServiceException {
+        try {
+            return organesDao.count();
+        } catch (DataAccessException e) {
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long countSousOrgane() throws ServiceException {
+        try {
+            return sousOrganesDao.count();
+        } catch (DataAccessException e) {
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long countElement() throws ServiceException {
+        try {
+            return elementDao.count();
+        } catch (DataAccessException e) {
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long countUtilisateur() throws ServiceException {
+        try {
+            return utilisateursDao.count();
+        } catch (DataAccessException e) {
+        }
+        return 0L;
     }
 }

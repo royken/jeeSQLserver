@@ -10,9 +10,12 @@ import com.royken.teknik.entities.Zone;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.PostAnswer;
 import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
+import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -43,7 +46,7 @@ public interface ITeknikService {
     
     public List<SousOrgane> findAllSousOrganeProjection();
     
-    public void saveReponseFromWeb(List<ReponseProjection> projections) throws ServiceException;
+    public PostAnswer saveReponseFromWeb(List<ReponseProjection> projections) throws ServiceException;
     
     //public List<ZoneP> findAllZoneProjection();
     
@@ -100,6 +103,10 @@ public interface ITeknikService {
     
     public List<Reponse> getAllReponse() throws ServiceException;
     
+    public List<Reponse> getReponseBetweenDates(Date debut, Date fin) throws ServiceException;
+    
+    public void importReponse(InputStream stream) throws ServiceException;
+    
     
     public Utilisateurs saveOrUpdateUtilisateur(Utilisateurs utilisateurs) throws ServiceException;
     
@@ -108,5 +115,17 @@ public interface ITeknikService {
     public void deleteUtilisateur(Long id) throws ServiceException;
     
     public List<Utilisateurs> getAllUtilisateurs() throws ServiceException;
+    
+    public Long countZone() throws ServiceException;
+    
+    public Long countBloc() throws ServiceException;
+    
+    public Long countOrgane() throws ServiceException;
+    
+    public Long countSousOrgane() throws ServiceException;
+    
+    public Long countElement() throws ServiceException;
+    
+    public Long countUtilisateur() throws ServiceException;
     
 }

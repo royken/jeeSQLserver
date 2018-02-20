@@ -41,7 +41,7 @@ public class Reponse implements Serializable{
     @JoinColumn(name = "ELEMENTS_ID")
     private Elements elements;
     
-    @Temporal(javax.persistence.TemporalType.TIME)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @Column(name = "DATE")
     private Date date;
     

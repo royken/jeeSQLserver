@@ -25,6 +25,8 @@ import org.primefaces.context.RequestContext;
 @RequestScoped
 public class ElementBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @EJB
     private ITeknikService teknikService;
     
@@ -96,6 +98,7 @@ public class ElementBean implements Serializable {
            
             
             try {
+                System.out.println("    L'element : " + elements);
                 elements.setSousOrganes(teknikService.findSousOrganeById(Long.valueOf(id)));
                 teknikService.saveOrUpdateElement(elements);
                 if (elements.getId() == null) {

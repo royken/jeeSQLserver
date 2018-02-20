@@ -24,8 +24,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement(name="utilisateurs")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Utilisateurs implements Serializable{
+
+    private static final long serialVersionUID = 1L;
     
     
+    @XmlTransient
     @OneToMany(mappedBy = "utilisateurs")
     private List<Reponse> reponses;
     @Id

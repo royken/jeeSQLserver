@@ -23,6 +23,8 @@ import org.primefaces.context.RequestContext;
 @Named(value = "blocBean")
 @RequestScoped
 public class BlocBean implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     
     @EJB
     private ITeknikService teknikService;

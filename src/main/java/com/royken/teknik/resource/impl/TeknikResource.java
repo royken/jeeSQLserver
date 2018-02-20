@@ -1,10 +1,10 @@
 package com.royken.teknik.resource.impl;
 
 import com.royken.teknik.entities.Utilisateurs;
-import com.royken.teknik.entities.Zone;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.PostAnswer;
 import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
@@ -66,12 +66,13 @@ public class TeknikResource implements ITeknikResource{
     }
 
     @Override
-    public void saveReponses(List<ReponseProjection> projections) {
+    public PostAnswer saveReponses(List<ReponseProjection> projections) {
         try {
-            service.saveReponseFromWeb(projections);
+            return service.saveReponseFromWeb(projections);
         } catch (ServiceException ex) {
             Logger.getLogger(TeknikResource.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
     
 }

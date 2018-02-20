@@ -4,6 +4,7 @@ import com.royken.teknik.entities.Utilisateurs;
 import com.royken.teknik.entities.projections.BlocZ;
 import com.royken.teknik.entities.projections.Element;
 import com.royken.teknik.entities.projections.Organe;
+import com.royken.teknik.entities.projections.PostAnswer;
 import com.royken.teknik.entities.projections.ReponseProjection;
 import com.royken.teknik.entities.projections.SousOrgane;
 import com.royken.teknik.entities.projections.ZoneP;
@@ -55,5 +56,6 @@ public interface ITeknikResource {
     @POST
     @Path("reponse")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveReponses(List<ReponseProjection> projections);
+    @Produces(value = "application/json")
+    public PostAnswer saveReponses(List<ReponseProjection> projections);
 }

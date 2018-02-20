@@ -35,9 +35,9 @@
                         </p:column>
                         <f:facet name="footer">  
                             <p:commandButton process="tableElement" update=":elementTable:elementDetail" value="Détails" oncomplete="PF('detailDialog').show()" />
-                            <p:commandButton  value="Ajouter un Sous Organe" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":elementTable:tableElement" />
-                            <p:commandButton  value="Modifier un Sous Organe" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierElement"/>
-                            <p:commandButton  value="Supprimer un Sous Organe" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteElement"/>
+                            <p:commandButton  value="Ajouter un Element" oncomplete="PF('ajouter_dialog').show()" icon="ui-icon-disk" update=":elementTable:tableElement" />
+                            <p:commandButton  value="Modifier un Elemment" oncomplete="PF('modifier_dialog').show()" icon="ui-icon-disk" update=":modifierElement"/>
+                            <p:commandButton  value="Supprimer un Element" oncomplete="PF('delete_dialog').show()" icon="ui-icon-disk" update=":deleteElement"/>
                         </f:facet> 
                     </p:dataTable>
                     <p:dialog header="Détails de l'Element" widgetVar="detailDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
@@ -60,10 +60,12 @@
                                 <h:outputText value="#{elementBean.elements.valeurNormale}" />
                                 <h:outputText value="BORNE ?: " />
                                 <h:outputText value="#{elementBean.elements.hasBorns}" />
+                                <h:outputText value="BORNE N-1?: " />
+                                <h:outputText value="#{elementBean.elements.criteriaAlpha}" />
                                 <h:outputText value="Borne Min : " />
                                 <h:outputText value="#{elementBean.elements.valMin}" />
                                 <h:outputText value="Borne Max : " />
-                                <h:outputText value="#{elementBean.elements.criteriaAlpha ? 'N-1 +' + elementBean.elements.valMax:elementBean.elements.valMax}" />
+                                <h:outputText value="#{elementBean.elements.valMax}" />
                                 <h:outputText value="PERIODE : " />
                                 <h:outputText value="#{elementBean.elements.periodeType}" />
                             </p:panelGrid>
@@ -87,6 +89,11 @@
                                 <f:selectItem itemLabel="Nombre" itemValue="int" />
                                 <f:selectItem itemLabel="Texte" itemValue="string" />
                             </p:selectOneMenu>
+                            <p:outputLabel  value="Valeur Bornée ? :" />
+                            <p:selectOneRadio id="bornadd" value="#{elementBean.elements.hasBorns}" required="true" requiredMessage="Le choix est obligatoire" >
+                                <f:selectItem itemLabel="OUI" itemValue="#{true}" />
+                                <f:selectItem itemLabel="NON" itemValue="#{false}" />
+                            </p:selectOneRadio>
                             <p:outputLabel  value="Type Bornes :" />
                             <p:selectOneRadio id="alphaadd" value="#{elementBean.elements.criteriaAlpha}" required="true" requiredMessage="Le type est obligatoire" >
                                 <f:selectItem itemLabel="N+1 + Max" itemValue="#{true}" />
@@ -100,12 +107,12 @@
                             <p:inputText  id="maxadd" value="#{elementBean.elements.valMax}" />
 
                             <p:outputLabel for="periodeadd" value="Période :" />
-                            <p:selectOneMenu id="periodeadd" value="#{elementBean.elements.periodeType}" required="true" requiredMessage="La période est obligatoire">
+                            <p:selectOneMenu id="periodeadd" value="#{elementBean.elements.periodeType}" required="true" requiredMessage="La période est obligatoire" style="min-width:200px; width:315px;">
                                 <f:selectItems value="#{elementBean.periodes}" />
                             </p:selectOneMenu>
                             <h:outputText value="Sous Organe : "/> 
                             <p:selectOneMenu value="#{elementBean.id}" class="syntaxe_content" required="true" requiredMessage="Le sous organe est obligatoire" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
-                                <f:selectItems value="#{elementBean.sousOrganeses}" var="sorgane" itemLabel="#{sorgane.nom}" itemValue="#{sorgane.id}" />
+                                <f:selectItems value="#{elementBean.sousOrganeses}" var="sorgane" itemLabel="#{sorgane.organes.nom} / #{sorgane.nom}" itemValue="#{sorgane.id}" />
                             </p:selectOneMenu> 
                             <f:facet name="footer"> <br/> 
                                 <p:commandButton  value="Enregistrer" action="#{elementBean.saveOrupdateElement()}"  oncomplete="PF('ajouter_dialog').hide()" icon="ui-icon-disk" update=":elementTable:tableElement" />  
@@ -134,6 +141,11 @@
                                 <f:selectItem itemLabel="Nombre" itemValue="int" />
                                 <f:selectItem itemLabel="Texte" itemValue="string" />
                             </p:selectOneMenu>
+                            <p:outputLabel for="bornmod" value="Type Bornes :" />
+                            <p:selectOneRadio id="bornmod" value="#{elementBean.elements.hasBorns}" required="true" requiredMessage="Le type est obligatoire">
+                                <f:selectItem itemLabel="OUI" itemValue="#{true}" />
+                                <f:selectItem itemLabel="NON" itemValue="#{false}" />
+                            </p:selectOneRadio>
                             <p:outputLabel for="alphamod" value="Type Bornes :" />
                             <p:selectOneRadio id="alphamod" value="#{elementBean.elements.criteriaAlpha}" required="true" requiredMessage="Le type est obligatoire">
                                 <f:selectItem itemLabel="N+1 + Max" itemValue="#{true}" />
@@ -152,7 +164,7 @@
                             </p:selectOneMenu>
                             <h:outputText value="Sous Organe : "/> 
                             <p:selectOneMenu value="#{elementBean.id}" class="syntaxe_content" required="true" requiredMessage="Le sous organe est obligatoire" filter="true" filterMatchMode="startsWith" style="height: 30px; width: 90%">
-                                <f:selectItems value="#{elementBean.sousOrganeses}" var="sorgane" itemLabel="#{sorgane.nom}" itemValue="#{sorgane.id}" />
+                                <f:selectItems value="#{elementBean.sousOrganeses}" var="sorgane" itemLabel="#{sorgane.organes.nom} / #{sorgane.nom}" itemValue="#{sorgane.id}" />
                             </p:selectOneMenu>  
                             <h:inputHidden value="#{elementBean.elements.id}"/>
                             <h:inputHidden value="#{elementBean.elements.version}"/>
