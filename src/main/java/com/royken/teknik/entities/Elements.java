@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "ELEMENTS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Elements implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     @OneToMany(mappedBy = "elements")
     private List<Reponse> reponses;
 
