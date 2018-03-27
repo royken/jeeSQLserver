@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-  <persistence-unit name="teknikPU" transaction-type="JTA">
+  <persistence-unit name="teknikNPU" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <jta-data-source>jdbc/teknikDataSource</jta-data-source>
+    <jta-data-source>jdbc/teknikNDataSource</jta-data-source>
     <class>com.royken.teknik.entities.Bloc</class>
-    <class>com.royken.teknik.entities.Elements</class>
     <class>com.royken.teknik.entities.Organes</class>
     <class>com.royken.teknik.entities.SousOrganes</class>
     <class>com.royken.teknik.entities.Utilisateurs</class>
     <class>com.royken.teknik.entities.Zone</class>
     <class>com.royken.teknik.entities.Reponse</class>
+    <class>com.royken.teknik.entities.Elements</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
